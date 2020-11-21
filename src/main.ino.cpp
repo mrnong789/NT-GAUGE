@@ -1,22 +1,25 @@
-// Copyright (c) Sandeep Mistry. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+# 1 "C:\\Users\\MRNONG~1\\AppData\\Local\\Temp\\tmp6vcrobm7"
+#include <Arduino.h>
+# 1 "D:/nt-garage-gauge/NT-GAUGE/NT-GAUGE/src/main.ino"
 
-#include <CAN.h> // the OBD2 library depends on the CAN library
+
+
+#include <CAN.h>
 #include <OBD2.h>
 #include <SPI.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 
-#define OLED_CS     5
-#define OLED_DC     6
-#define OLED_RESET  7
-#define OLED_SDA    8
-#define OLED_SCL    9
+#define OLED_CS 5
+#define OLED_DC 6
+#define OLED_RESET 7
+#define OLED_SDA 8
+#define OLED_SCL 9
 
 Adafruit_SSD1306 display(OLED_SDA, OLED_SCL, OLED_DC, OLED_RESET, OLED_CS);
 
-// array of P5ID's to print values of
+
 const int PIDS[] = {
   CALCULATED_ENGINE_LOAD,
   ENGINE_COOLANT_TEMPERATURE,
@@ -33,21 +36,25 @@ const int PIDS[] = {
 };
 
 const int NUM_PIDS = sizeof(PIDS) / sizeof(PIDS[0]);
-
+void setup();
+void loop();
+void printPID(int pid);
+void displayGauge(char **pidName, float pidValue[]);
+#line 37 "D:/nt-garage-gauge/NT-GAUGE/NT-GAUGE/src/main.ino"
 void setup() {
     Serial.begin(9600);
 
     while (!Serial);
 
     display.begin(SSD1306_SWITCHCAPVCC);
-    // init done
 
-    // Clear the buffer.
+
+
     display.clearDisplay();
 
 
     display.setTextSize(2);
-    display.setTextColor(WHITE); // 'inverted' text
+    display.setTextColor(WHITE);
     display.setCursor(10,0);
     display.println("NT-GARAGE");
     display.setTextSize(1);
@@ -58,9 +65,9 @@ void setup() {
     delay(2000);
     display.clearDisplay();
 
-   
+
     display.setTextSize(2);
-    display.setTextColor(WHITE); // 'inverted' text
+    display.setTextColor(WHITE);
     display.setCursor(10,0);
     display.println("NT-GARAGE");
 
@@ -74,12 +81,12 @@ void setup() {
        Serial.println("xxxxxx");
 
         if (!OBD2.begin()) {
-            // Serial.print("Connecting to OBDII Error!!");
+
 
         delay(1000);
         } else {
            display.setTextSize(2);
-            display.setTextColor(WHITE); // 'inverted' text
+            display.setTextColor(WHITE);
             display.setCursor(10,0);
             display.clearDisplay();
             display.println("NT-GARAGE");
@@ -113,32 +120,32 @@ void loop() {
     pidValue[4] = 0;
     pidValue[5] = 0;
 
-    // Serial.println("-------------------------------------");
 
-    
+
+
     float TFT = OBD2.pidReadExtra(0x1E,0x1C);
- //   Serial.print("TFT:");
-  //  Serial.println(TFT);
+
+
 
     float ECT = OBD2.pidRead(0x05);
-  //  Serial.print("ECT:");
-  //  Serial.println(ECT);
+
+
 
     float RPM = OBD2.pidRead(0x0C);
-  //  Serial.print("RPM:");
-   // Serial.println(RPM);
+
+
 
     float AIT = OBD2.pidRead(0x0F);
-    // Serial.print("AIT:");
-    // Serial.println(AIT);
+
+
 
     float MAF = OBD2.pidRead(0x10);
-    // Serial.print("MAF:");
-    // Serial.println(MAF);
+
+
 
     float CMV = OBD2.pidRead(0x42);
-    // Serial.print("CMV:");
-    // Serial.println(CMV);
+
+
 
 
 
@@ -159,30 +166,30 @@ void loop() {
 
     pidName[5]=(char*)"CMV";
     pidValue[5] = CMV;
-   
-    displayGauge(pidName,pidValue);   
+
+    displayGauge(pidName,pidValue);
 
     delay(100);
 
-    
+
 
 }
 
 void printPID(int pid) {
-  // print PID name
-  Serial.print(OBD2.pidName(pid));
-  // Serial.print(F(" = "));
 
-  // read the PID value
+  Serial.print(OBD2.pidName(pid));
+
+
+
   float pidValue = OBD2.pidRead(pid);
 
   if (isnan(pidValue)) {
-    // Serial.print("error");
+
   } else {
-    // print value with units
-    // Serial.print(pidValue);
-    // Serial.print(F(" "));
-    // Serial.print(OBD2.pidUnits(pid));
+
+
+
+
   }
 
   Serial.println();
@@ -193,7 +200,7 @@ void displayGauge(char **pidName, float pidValue[]) {
     display.fillRect(64, 10, 1, 22, 1);
     display.fillRect(0, 10, 128, 1, 1);
 
-     // text row 1 1
+
     uint8_t icon = 30;
     if(millis() % 2 == 0){
         icon = 31;
@@ -203,7 +210,7 @@ void displayGauge(char **pidName, float pidValue[]) {
     display.setCursor(62,0);
     display.write(icon);
 
-    // text row 1 1
+
     display.setTextSize(1);
     display.setTextColor(WHITE);
     display.setCursor(0,0);
@@ -213,7 +220,7 @@ void displayGauge(char **pidName, float pidValue[]) {
     display.setTextColor(WHITE);
     display.println(pidValue[0]);
 
-     // text row 1 2
+
     display.setTextSize(1);
     display.setTextColor(WHITE);
     display.setCursor(72,0);
@@ -222,9 +229,9 @@ void displayGauge(char **pidName, float pidValue[]) {
     display.setTextSize(1);
     display.setTextColor(WHITE);
     display.println(pidValue[1]);
-  
 
-    // text row 2 1
+
+
     display.setTextSize(1);
     display.setTextColor(WHITE);
     display.setCursor(0,12);
@@ -235,7 +242,7 @@ void displayGauge(char **pidName, float pidValue[]) {
     display.println(pidValue[2]);
 
 
-     // text row 2 2
+
     display.setTextSize(1);
     display.setTextColor(WHITE);
     display.setCursor(72,12);
@@ -244,10 +251,10 @@ void displayGauge(char **pidName, float pidValue[]) {
     display.setTextSize(1);
     display.setTextColor(WHITE);
     display.println(pidValue[3]);
-   
 
 
-     // text row 3 1
+
+
     display.setTextSize(1);
     display.setTextColor(WHITE);
     display.setCursor(0,22);
@@ -256,9 +263,9 @@ void displayGauge(char **pidName, float pidValue[]) {
     display.setTextSize(1);
     display.setTextColor(WHITE);
     display.println(pidValue[4]);
-  
 
-     // text row 3 2
+
+
     display.setTextSize(1);
     display.setTextColor(WHITE);
     display.setCursor(72,22);
@@ -270,4 +277,3 @@ void displayGauge(char **pidName, float pidValue[]) {
     display.display();
 
 }
-

@@ -347,7 +347,8 @@ int OBD2Class::begin()
 
   // first try standard addressing
   _useExtendedAddressing = false;
-  CAN.filter(0x7e8);
+  CAN.filter(0x7e9);
+ // CAN.filter(0x7e8);
   if (!supportedPidsRead()) {
     // next try extended addressing
     _useExtendedAddressing = true;
@@ -455,9 +456,9 @@ String OBD2Class::pidUnits(uint8_t pid)
 
 float OBD2Class::pidReadExtra(uint8_t pid1,uint8_t pid2)
 {
-  if (!pidSupportedExtra(pid1,pid2)) {
-    return NAN;
-  }
+  // if (!pidSupportedExtra(pid1,pid2)) {
+  //   return 0;
+  // }
 
   #define A value[0]
   #define B value[1]
