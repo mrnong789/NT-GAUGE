@@ -5,16 +5,6 @@
 #include <OBD2.h>
 #include <SPI.h>
 #include <Wire.h>
-#include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
-
-#define OLED_CS     5
-#define OLED_DC     6
-#define OLED_RESET  7
-#define OLED_SDA    8
-#define OLED_SCL    9
-
-Adafruit_SSD1306 display(OLED_SDA, OLED_SCL, OLED_DC, OLED_RESET, OLED_CS);
 
 // array of P5ID's to print values of
 const int PIDS[] = {
@@ -38,58 +28,17 @@ void setup() {
     Serial.begin(9600);
 
     while (!Serial);
-
-    display.begin(SSD1306_SWITCHCAPVCC);
     // init done
 
-    // Clear the buffer.
-    display.clearDisplay();
-
-
-    display.setTextSize(2);
-    display.setTextColor(WHITE); // 'inverted' text
-    display.setCursor(10,0);
-    display.println("NT-GARAGE");
-    display.setTextSize(1);
-    display.setTextColor(WHITE);
-    display.println();
-    display.println(">>Ford Performance<<");
-    display.display();
-    delay(2000);
-    display.clearDisplay();
-
-   
-    display.setTextSize(2);
-    display.setTextColor(WHITE); // 'inverted' text
-    display.setCursor(10,0);
-    display.println("NT-GARAGE");
-
-    display.setTextSize(1);
-    display.setTextColor(WHITE);
-    display.println();
-    display.println("Connecting OBDII....");
-    display.display();
-
     while (true) {
-       Serial.println("xxxxxx");
+       Serial.println("Checking...");
 
         if (!OBD2.begin()) {
             // Serial.print("Connecting to OBDII Error!!");
-
-        delay(1000);
+            Serial.println("Connecting to OBDII Error!!");
+            delay(1000);
         } else {
-           display.setTextSize(2);
-            display.setTextColor(WHITE); // 'inverted' text
-            display.setCursor(10,0);
-            display.clearDisplay();
-            display.println("NT-GARAGE");
-            display.display();
-
-            display.setTextSize(1);
-            display.setTextColor(WHITE);
-            display.println();
-            display.println("Connect OBDII OK!!");
-            display.display();
+          Serial.println("Connect OBDII OK!!");
         break;
         }
     }
@@ -189,85 +138,9 @@ void printPID(int pid) {
 }
 
 void displayGauge(char **pidName, float pidValue[]) {
-    display.clearDisplay();
-    display.fillRect(64, 10, 1, 22, 1);
-    display.fillRect(0, 10, 128, 1, 1);
 
-     // text row 1 1
-    uint8_t icon = 30;
-    if(millis() % 2 == 0){
-        icon = 31;
-    }
-    display.setTextSize(1);
-    display.setTextColor(WHITE);
-    display.setCursor(62,0);
-    display.write(icon);
-
-    // text row 1 1
-    display.setTextSize(1);
-    display.setTextColor(WHITE);
-    display.setCursor(0,0);
-    display.print(pidName[0]);
-    display.setCursor(25,0);
-    display.setTextSize(1);
-    display.setTextColor(WHITE);
-    display.println(pidValue[0]);
-
-     // text row 1 2
-    display.setTextSize(1);
-    display.setTextColor(WHITE);
-    display.setCursor(72,0);
-    display.print(pidName[1]);
-    display.setCursor(72+25,0);
-    display.setTextSize(1);
-    display.setTextColor(WHITE);
-    display.println(pidValue[1]);
-  
-
-    // text row 2 1
-    display.setTextSize(1);
-    display.setTextColor(WHITE);
-    display.setCursor(0,12);
-    display.print(pidName[2]);
-    display.setCursor(0+25,12);
-    display.setTextSize(1);
-    display.setTextColor(WHITE);
-    display.println(pidValue[2]);
-
-
-     // text row 2 2
-    display.setTextSize(1);
-    display.setTextColor(WHITE);
-    display.setCursor(72,12);
-    display.print(pidName[3]);
-    display.setCursor(72+25,12);
-    display.setTextSize(1);
-    display.setTextColor(WHITE);
-    display.println(pidValue[3]);
-   
-
-
-     // text row 3 1
-    display.setTextSize(1);
-    display.setTextColor(WHITE);
-    display.setCursor(0,22);
-    display.print(pidName[4]);
-    display.setCursor(0+25,22);
-    display.setTextSize(1);
-    display.setTextColor(WHITE);
-    display.println(pidValue[4]);
-  
-
-     // text row 3 2
-    display.setTextSize(1);
-    display.setTextColor(WHITE);
-    display.setCursor(72,22);
-    display.print(pidName[5]);
-    display.setCursor(72+25,22);
-    display.setTextSize(1);
-    display.setTextColor(WHITE);
-    display.println(pidValue[5]);
-    display.display();
+  Serial.print(pidName[0]);
+  Serial.println(pidValue[0]);
 
 }
 
