@@ -34,14 +34,14 @@ byte ectIcon[] = {
 };
 
 byte tftIcon[] = {
-  0x00,
-  0x00,
-  0x04,
   0x0E,
-  0x1B,
   0x0E,
   0x04,
-  0x00
+  0x04,
+  0x04,
+  0x04,
+  0x0E,
+  0x1F
 };
 
 
@@ -107,23 +107,22 @@ void loop() {
 
 void displayGauge(char **pidName, float pidValue[]) {
 
-  char valueTemp[10];
+  char float_str[10] = {'\0'};
+  char strPrint[5] = {'\0'};
 
   for (int i = 0; i < 3; i++) {
     //Text
-    lcd.setCursor((i*5), 0);
+    lcd.setCursor((i*6), 0);
     lcd.print(String(pidName[i]));
 
     //icon
-    lcd.setCursor(((i*5)+3), 0);
+    lcd.setCursor(((i*6)+3), 0);
     lcd.write(i);
 
     //value
-    lcd.setCursor((i*5), 1);
-    //pidValue[i]
-    sprintf(valueTemp,"%2.2f",(double)pidValue[i]);
-    lcd.print(valueTemp); 
+    lcd.setCursor((i*6), 1);
+    dtostrf(pidValue[i],3,1,float_str);
+    sprintf(strPrint, "%s", float_str);
+    lcd.print(strPrint);
   }
-  
-
 }
