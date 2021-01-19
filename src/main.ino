@@ -5,18 +5,10 @@
 #include <OBD2.h>
 #include <SPI.h>
 #include <Wire.h>
-#include <Adafruit_GFX.h> // Hardware-specific library
-#include <MCUFRIEND_kbv.h>
-MCUFRIEND_kbv tft;
+#include <LiquidCrystal_I2C.h>
 
-#define	BLACK   0x0000
-#define	BLUE    0x001F
-#define	RED     0xF800
-#define	GREEN   0x07E0
-#define CYAN    0x07FF
-#define MAGENTA 0xF81F
-#define YELLOW  0xFFE0
-#define WHITE   0xFFFF
+// Set the LCD address to 0x27 for a 16 chars and 2 line display
+LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 // array of P5ID's to print values of
 const int PIDS[] = {
@@ -37,36 +29,20 @@ const int PIDS[] = {
 const int NUM_PIDS = sizeof(PIDS) / sizeof(PIDS[0]);
 
 
-char *msg[] = { "PORTRAIT", "LANDSCAPE", "PORTRAIT_REV", "LANDSCAPE_REV" };
-uint8_t aspect;
-
 void setup() {
     Serial.begin(9600);
 
     while (!Serial);
     // init done
 
-    tft.reset();
-    uint16_t identifier = tft.readID();
-    Serial.print("ID = 0x");
-    Serial.println(identifier, HEX);
-    if (identifier == 0xEFEF) identifier = 0x9486;
-    tft.begin(identifier);
-    tft.setRotation(1);
-    tft.fillScreen(0x0000);
+    lcd.begin();
 
-      // put your main code here, to run repeatedly:
+    // Turn on the blacklight and print a message.
+    lcd.backlight();
   
-
     while (true) {
-       Serial.println("Checking...");
-    uint16_t x = 50, y = 100;
-    tft.setRotation(1);
-    tft.fillScreen(0x0000);
-    tft.setCursor(0, 0);
-    tft.setTextSize(2);
-    tft.setCursor(x, y);
-    tft.println("Checking...");
+      Serial.println("Checking...");
+      lcd.print("Checking...");
         if (!OBD2.begin()) {
             // Serial.print("Connecting to OBDII Error!!");
             Serial.println("Connecting to OBDII Error!!");
@@ -81,46 +57,24 @@ void setup() {
 
 
 void loop() {
-    char *pidName[6]={'\0'};
+    char *pidName[4]={'\0'};
     pidName[0]=(char*)"ECT";
     pidName[1]=(char*)"TFT";
     pidName[2]=(char*)"RPM";
     pidName[3]=(char*)"EOT";
-    pidName[4]=(char*)"DEV";
-    pidName[5]=(char*)"DEV";
 
-    float pidValue[6] = {};
+    float pidValue[4] = {};
     pidValue[0] = 0;
     pidValue[1] = 0;
     pidValue[2] = 0;
     pidValue[3] = 0;
-    pidValue[4] = 0;
-    pidValue[5] = 0;
+
     float TFT = OBD2.pidReadExtra(0x1E,0x1C);
- //   Serial.print("TFT:");
-  //  Serial.println(TFT);
-
     float ECT = OBD2.pidRead(0x05);
-  //  Serial.print("ECT:");
-  //  Serial.println(ECT);
-
     float RPM = OBD2.pidRead(0x0C);
-  //  Serial.print("RPM:");
-   // Serial.println(RPM);
-
-    float AIT = OBD2.pidRead(0x0F);
-    // Serial.print("AIT:");
-    // Serial.println(AIT);
-
-    float MAF = OBD2.pidRead(0x10);
-    // Serial.print("MAF:");
-    // Serial.println(MAF);
-
+    // float AIT = OBD2.pidRead(0x0F);
+    // float MAF = OBD2.pidRead(0x10);
     float CMV = OBD2.pidRead(0x42);
-    // Serial.print("CMV:");
-    // Serial.println(CMV);
-
-
 
     pidName[0]=(char*)"ECT";
     pidValue[0] = ECT;
@@ -131,14 +85,8 @@ void loop() {
     pidName[2]=(char*)"RPM";
     pidValue[2] = RPM;
 
-    pidName[3]=(char*)"AIT";
-    pidValue[3] = AIT;
-
-    pidName[4]=(char*)"MAF";
-    pidValue[4] = MAF;
-
-    pidName[5]=(char*)"CMV";
-    pidValue[5] = CMV;
+    pidName[3]=(char*)"CMV";
+    pidValue[3] = CMV;
    
     displayGauge(pidName,pidValue);   
 
@@ -146,68 +94,21 @@ void loop() {
 
 }
 
-void printPID(int pid) {
-  // print PID name
-  Serial.print(OBD2.pidName(pid));
-  // Serial.print(F(" = "));
-
-  // read the PID value
-  float pidValue = OBD2.pidRead(pid);
-
-  if (isnan(pidValue)) {
-    // Serial.print("error");
-  } else {
-    // print value with units
-    // Serial.print(pidValue);
-    // Serial.print(F(" "));
-    // Serial.print(OBD2.pidUnits(pid));
-  }
-
-  Serial.println();
-}
-
 void displayGauge(char **pidName, float pidValue[]) {
 
   char valueTemp[10];
-  int posY = 10;
-  for(int i=0;i<6;i++){
-    if(i % 2 == 0){
-      tft.setTextSize(4);
-      tft.setTextColor(WHITE, BLACK);
-      tft.setCursor(10, posY);
-      tft.println(String(pidName[i]));
-      sprintf(valueTemp,"%f",pidValue[i]);
-      Serial.println(valueTemp);
-      tft.setTextSize(3);
-      tft.setTextColor(WHITE, BLACK);
-      tft.setCursor(90, posY);
-      tft.println(pidValue[i]);
-    }else{
-      tft.setTextSize(4);
-      tft.setTextColor(WHITE, BLACK);
-      tft.setCursor(260, posY);
-      tft.println(String(pidName[i]));
-      sprintf(valueTemp,"%f",pidValue[i]);
-      Serial.println(valueTemp);
-      tft.setTextSize(3);
-      tft.setTextColor(WHITE, BLACK);
-      tft.setCursor(340, posY);
-      tft.println(pidValue[i]);
-      posY = posY + 90;
-    }
-  
+  int col = 0;
+  int row = 0;
+  for (int i = 1; i <= 4; i++) {
+
+    if(i > 2) col = 9;
+    row = i % 2;
+    lcd.setCursor(col, row);
+    lcd.print(String(pidName[i-1]));
+    lcd.setCursor(col + 4, row);
+    sprintf(valueTemp,"%f",pidValue[i-1]);
+    lcd.print(valueTemp); 
+   
   }
-  
-  
-
-  
-  
- 
-  
-
-
-  
-
 
 }
-
