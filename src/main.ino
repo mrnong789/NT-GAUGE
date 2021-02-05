@@ -12,36 +12,36 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 
 byte battertyIcon[] = {
-  0x10,
-  0x18,
-  0x18,
-  0x1F,
-  0x1F,
-  0x03,
-  0x03,
-  0x01
+  0x00,
+  0x08,
+  0x08,
+  0x0E,
+  0x06,
+  0x02,
+  0x02,
+  0x00
 };
 
 byte ectIcon[] = {
+  0x07,
+  0x04,
+  0x07,
+  0x04,
+  0x07,
+  0x04,
   0x0E,
-  0x08,
-  0x0E,
-  0x08,
-  0x0E,
-  0x08,
-  0x0C,
-  0x0C
+  0x00
 };
 
 byte tftIcon[] = {
-  0x0E,
-  0x0E,
-  0x04,
-  0x04,
-  0x04,
-  0x04,
-  0x0E,
-  0x1F
+  0x00,
+  0x15,
+  0x15,
+  0x1F,
+  0x1F,
+  0x05,
+  0x05,
+  0x00
 };
 
 
@@ -52,16 +52,25 @@ void setup() {
     // init done
 
     lcd.begin();
-    lcd.createChar(0, battertyIcon);
-    lcd.createChar(1, ectIcon);
-    lcd.createChar(2, tftIcon);
+    lcd.clear();
+    lcd.createChar(0, ectIcon);
+    lcd.createChar(1, tftIcon);
+    lcd.createChar(2, battertyIcon);
 
     // Turn on the blacklight and print a message.
-    lcd.backlight();
-  
+   // lcd.backlight();
+    lcd.setCursor(0, 0);
+    lcd.print("Ford Performance");
+    lcd.setCursor(2, 1);
+    lcd.print("By NT-Garage");
+    
+
+    delay(10000);
+    lcd.clear();
     while (true) {
-      Serial.println("Checking...");
-      lcd.print("Checking...");
+      lcd.setCursor(1, 1); 
+      lcd.print("Connecting...");
+      	lcd.blink();
         if (!OBD2.begin()) {
             // Serial.print("Connecting to OBDII Error!!");
             Serial.println("Connecting to OBDII Error!!");
@@ -71,17 +80,22 @@ void setup() {
         break;
         }
     }
+    
+    lcd.clear();
 }
 
 
 
 void loop() {
-    char *pidName[3]={'\0'};
+    char *pidName[3] = {'\0'};
+   
+    float pidValue[3] = {};
+
     pidName[0]=(char*)"ECT";
     pidName[1]=(char*)"TFT";
     pidName[2]=(char*)"BAT";
 
-    float pidValue[3] = {};
+ 
     pidValue[0] = 0;
     pidValue[1] = 0;
     pidValue[2] = 0;
