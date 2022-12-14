@@ -62,7 +62,7 @@ void setup() {
     lcd.setCursor(0, 0);
     lcd.print("Smart gauge");
     lcd.setCursor(2, 1);
-    lcd.print("By Mrnong789");
+    lcd.print("By MRNONG789");
     
 
     delay(10000);
