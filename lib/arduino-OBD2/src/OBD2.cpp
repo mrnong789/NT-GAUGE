@@ -471,7 +471,7 @@ float OBD2Class::pidReadExtra(uint8_t pid1,uint8_t pid2)
   }
 
   //return(((((signed(A)*256)+B)*(9/8)+320)/10) -32)*(0.55);
-  return(((signed(A)*256)+B)*(9/80))*(0.55);  
+  return(((A*256)+B)*0.1125)*(0.55);  
 }
 
 

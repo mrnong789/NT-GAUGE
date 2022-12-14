@@ -134,9 +134,12 @@ void displayGauge(char **pidName, float pidValue[]) {
     lcd.write(i);
 
     //value
-    lcd.setCursor((i*6), 1);
-    dtostrf(pidValue[i],3,1,float_str);
-    sprintf(strPrint, "%s", float_str);
-    lcd.print(strPrint);
+    if(!isnan(pidValue[i])){
+      lcd.setCursor((i*6), 1);
+      dtostrf(pidValue[i],3,1,float_str);
+      sprintf(strPrint, "%s", float_str);
+      lcd.print(strPrint);
+    }
+    
   }
 }
