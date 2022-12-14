@@ -60,9 +60,9 @@ void setup() {
     // Turn on the blacklight and print a message.
    // lcd.backlight();
     lcd.setCursor(0, 0);
-    lcd.print("Ford Performance");
+    lcd.print("Smart gauge");
     lcd.setCursor(2, 1);
-    lcd.print("By NT-Garage");
+    lcd.print("By Mrnong789");
     
 
     delay(10000);
